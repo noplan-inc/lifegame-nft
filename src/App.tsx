@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 // @ts-ignore
 import Board from './container/board';
 import './App.css';
@@ -8,6 +8,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useEagerConnect, useInactiveListener } from './hooks';
 
 import { injected } from './utils/connectors';
+import { ListZora } from './container/zora';
 
 function App() {
     const {
@@ -52,6 +53,9 @@ function App() {
                     boardSize={25}
                     render={(props: BoardViewProps) => <BoardView {...props} />}
                 />
+            </div>
+            <div>
+                <ListZora />
             </div>
         </div>
     );
