@@ -89,17 +89,21 @@ export const setInitCellNeighbours = (
     neighbours: createNeighbourIndex(size, index),
 });
 
+export interface ExportedCells {
+    cells: CompressCell[];
+    size: number;
+}
+
 export interface CompressCell {
     id: string;
     live: boolean;
 }
 
-export const restoreCells = (ccs: CompressCell[]): Cell[] => {
-    const boardSize = Math.sqrt(ccs.length);
-    return ccs.map((cc, index) => {
+export const restoreCells = (ecs: ExportedCells): Cell[] => {
+    return ecs.cells.map((cc, index) => {
         return {
             ...cc,
-            ...setInitCellNeighbours(boardSize, index),
+            ...setInitCellNeighbours(ecs.size, index),
         };
     });
 };

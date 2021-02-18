@@ -1,5 +1,10 @@
 import React from 'react';
-import { isRight, isBottom, restoreCells, CompressCell } from '../utils/helper';
+import {
+    isRight,
+    isBottom,
+    restoreCells,
+    ExportedCells,
+} from '../utils/helper';
 
 const reloadPage = (): void => window.location.reload();
 
@@ -49,7 +54,11 @@ const Board = (props: BoardViewProps) => {
                 live: cell.live,
             };
         });
-        const json = JSON.stringify(compressCells);
+        const output = {
+            size: Math.sqrt(boardStatus.length),
+            cells: compressCells,
+        };
+        const json = JSON.stringify(output);
         console.log(json);
     };
 
@@ -59,11 +68,11 @@ const Board = (props: BoardViewProps) => {
 
             <textarea
                 onChange={(val) => {
-                    const cCells = JSON.parse(
+                    const eCells = JSON.parse(
                         val.currentTarget.value
-                    ) as CompressCell[];
+                    ) as ExportedCells;
 
-                    const cells = restoreCells(cCells);
+                    const cells = restoreCells(eCells);
                     setCells(cells);
                 }}
             />
