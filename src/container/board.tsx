@@ -25,6 +25,7 @@ type BoardContainerProps = {
     cellSize: number;
     spawnRate: number;
     boardSize: number;
+    initStatus?: Cell[];
     render: (props: BoardViewProps) => JSX.Element;
 };
 
@@ -92,7 +93,12 @@ class Board extends React.Component {
     };
 
     initBoardStatus = () => {
-        const { spawnRate, boardSize } = this.props;
+        const { spawnRate, boardSize, initStatus } = this.props;
+        if (initStatus) {
+            return this.setState({
+                boardStatus: initStatus,
+            });
+        }
 
         const newStatus: Cell[] = createBoardStatus(boardSize).map(
             (cell: Cell, index: number) => ({
