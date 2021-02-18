@@ -79,3 +79,27 @@ export const createNeighbourIndex: GetIndexList = (size, index) => {
 
     return filterIndex(center, size, index);
 };
+
+type CellNeighbours = { neighbours: number[] };
+
+export const setInitCellNeighbours = (
+    size: number,
+    index: number
+): CellNeighbours => ({
+    neighbours: createNeighbourIndex(size, index),
+});
+
+export interface CompressCell {
+    id: string;
+    live: boolean;
+}
+
+export const restoreCells = (ccs: CompressCell[]): Cell[] => {
+    const boardSize = Math.sqrt(ccs.length);
+    return ccs.map((cc, index) => {
+        return {
+            ...cc,
+            ...setInitCellNeighbours(boardSize, index),
+        };
+    });
+};
