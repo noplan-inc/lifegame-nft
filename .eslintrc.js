@@ -21,6 +21,7 @@ module.exports = {
     rules: {
         'require-jsdoc': 'off',
         'no-invalid-this': 'off',
+        'no-unused-vars': 'warn',
     },
     settings: {
         react: {
