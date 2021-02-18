@@ -11,4 +11,5 @@ interface BoardViewProps {
     boardStatus: Cell[];
     start: () => void;
     stop: () => void;
+    setCells: (cells: Cell[]) => void;
 }
