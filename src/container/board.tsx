@@ -1,24 +1,10 @@
 import * as React from 'react';
-import { setInitCellNeighbours } from '../utils/helper';
-
-const initCell = (): Cell => ({
-    id: '',
-    live: false,
-    neighbours: [],
-});
-
-const createBoardStatus = (size: number): Cell[] =>
-    new Array(size * size).fill(initCell());
-
-type CellLive = { live: boolean };
-const setInitCellLive = (spawnRate: number): CellLive => ({
-    live: spawnRate > Math.floor(Math.random() * 100),
-});
-
-type CellId = { id: string };
-const setInitCellId = (index: number): CellId => ({
-    id: `id${index || 0}`,
-});
+import {
+    createBoardStatus,
+    setInitCellId,
+    setInitCellLive,
+    setInitCellNeighbours,
+} from '../utils/helper';
 
 type BoardContainerProps = {
     intervalTime: number;

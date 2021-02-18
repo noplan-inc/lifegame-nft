@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     isRight,
     isBottom,
     restoreCells,
     ExportedCells,
+    setInitCellNeighbours,
+    createBoardStatus,
+    setInitCellId,
+    setInitCellLive,
 } from '../utils/helper';
 
 const reloadPage = (): void => window.location.reload();
@@ -44,6 +48,8 @@ const Board = (props: BoardViewProps) => {
         mode,
     } = props;
 
+    const [bSize, setBoardSize] = useState(boardSize);
+
     const cellClickHandler = async (cell: Cell) => {
         const cs = [...boardStatus];
         const newCells = cs.map((c) => {
@@ -75,16 +81,42 @@ const Board = (props: BoardViewProps) => {
     return (
         <div>
             {isEditor ? (
-                <textarea
-                    onChange={(val) => {
-                        const eCells = JSON.parse(
-                            val.currentTarget.value
-                        ) as ExportedCells;
+                <div>
+                    <textarea
+                        onChange={(val) => {
+                            const eCells = JSON.parse(
+                                val.currentTarget.value
+                            ) as ExportedCells;
 
-                        const cells = restoreCells(eCells);
-                        setCells(cells);
-                    }}
-                />
+                            const cells = restoreCells(eCells);
+                            setCells(cells);
+                        }}
+                    />
+                    <input
+                        placeholder={'boardSize must be able to sqrt'}
+                        onChange={(val) => {
+                            const boardSize = parseInt(val.currentTarget.value);
+
+                            if (boardSize > 50 || isNaN(boardSize)) {
+                                alert(
+                                    `boardSize is max(50). ${boardSize} is invalid.`
+                                );
+                                return;
+                            }
+
+                            const newStatus: Cell[] = createBoardStatus(
+                                boardSize
+                            ).map((cell: Cell, index: number) => ({
+                                ...cell,
+                                ...setInitCellId(index),
+                                ...setInitCellLive(50),
+                                ...setInitCellNeighbours(boardSize, index),
+                            }));
+                            setBoardSize(boardSize);
+                            setCells(newStatus);
+                        }}
+                    />
+                </div>
             ) : (
                 <></>
             )}
@@ -116,14 +148,14 @@ const Board = (props: BoardViewProps) => {
                                 style={generateStyle(
                                     cellSize,
                                     cell.live,
-                                    boardSize,
+                                    bSize,
                                     index
                                 )}
                                 onClick={async () => {
                                     await cellClickHandler(cell);
                                 }}
                             />
-                            {isRight(boardSize, index) && <br />}
+                            {isRight(bSize, index) && <br />}
                         </span>
                     )
                 )}

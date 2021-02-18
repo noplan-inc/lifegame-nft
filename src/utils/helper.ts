@@ -107,3 +107,23 @@ export const restoreCells = (ecs: ExportedCells): Cell[] => {
         };
     });
 };
+
+export const initCell = (): Cell => ({
+    id: '',
+    live: false,
+    neighbours: [],
+});
+
+export const createBoardStatus = (size: number): Cell[] => {
+    return new Array(size * size).fill(initCell());
+};
+
+export type CellLive = { live: boolean };
+export const setInitCellLive = (spawnRate: number): CellLive => ({
+    live: spawnRate > Math.floor(Math.random() * 100),
+});
+
+export type CellId = { id: string };
+export const setInitCellId = (index: number): CellId => ({
+    id: `id${index || 0}`,
+});
