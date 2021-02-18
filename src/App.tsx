@@ -46,7 +46,9 @@ function App() {
                 </button>
             </div>
             <div>
+                <h2>editor</h2>
                 <Board
+                    mode={'editor'}
                     intervalTime={500}
                     cellSize={20}
                     spawnRate={25}
@@ -55,6 +57,7 @@ function App() {
                 />
             </div>
             <div>
+                <h2>market</h2>
                 <ListZora />
             </div>
         </div>

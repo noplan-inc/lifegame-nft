@@ -46,6 +46,7 @@ export const ListZora: React.FC<{}> = () => {
                 return (
                     <div key={index}>
                         <Board
+                            mode={'viewer'}
                             intervalTime={500}
                             cellSize={20}
                             spawnRate={25}

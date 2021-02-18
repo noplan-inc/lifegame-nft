@@ -9,6 +9,7 @@ interface BoardViewProps {
     boardSize: number;
     cellSize: number;
     boardStatus: Cell[];
+    mode: 'viewer' | 'editor';
     start: () => void;
     stop: () => void;
     setCells: (cells: Cell[]) => void;

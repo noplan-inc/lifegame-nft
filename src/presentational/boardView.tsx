@@ -34,7 +34,15 @@ const generateStyle: GenerateStyle = (cellSize, live, boardSize, index) => {
 };
 
 const Board = (props: BoardViewProps) => {
-    const { boardSize, cellSize, boardStatus, start, stop, setCells } = props;
+    const {
+        boardSize,
+        cellSize,
+        boardStatus,
+        start,
+        stop,
+        setCells,
+        mode,
+    } = props;
 
     const cellClickHandler = async (cell: Cell) => {
         const cs = [...boardStatus];
@@ -46,6 +54,8 @@ const Board = (props: BoardViewProps) => {
         });
         setCells(newCells);
     };
+
+    const isEditor = mode === 'editor';
 
     const printHandler = async () => {
         const compressCells = boardStatus.map((cell) => {
@@ -64,18 +74,20 @@ const Board = (props: BoardViewProps) => {
 
     return (
         <div>
-            <h1>life gaming</h1>
+            {isEditor ? (
+                <textarea
+                    onChange={(val) => {
+                        const eCells = JSON.parse(
+                            val.currentTarget.value
+                        ) as ExportedCells;
 
-            <textarea
-                onChange={(val) => {
-                    const eCells = JSON.parse(
-                        val.currentTarget.value
-                    ) as ExportedCells;
-
-                    const cells = restoreCells(eCells);
-                    setCells(cells);
-                }}
-            />
+                        const cells = restoreCells(eCells);
+                        setCells(cells);
+                    }}
+                />
+            ) : (
+                <></>
+            )}
 
             <div>
                 <button type="button" onClick={start}>
@@ -87,9 +99,13 @@ const Board = (props: BoardViewProps) => {
                 <button type={'button'} onClick={stop}>
                     stop
                 </button>
-                <button type={'button'} onClick={printHandler}>
-                    print
-                </button>
+                {isEditor ? (
+                    <button type={'button'} onClick={printHandler}>
+                        print
+                    </button>
+                ) : (
+                    <></>
+                )}
             </div>
 
             <div style={{ fontSize: 0 }}>
