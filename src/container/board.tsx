@@ -144,8 +144,6 @@ class Board extends React.Component {
             stop: this.stop,
         };
 
-        console.log(childrenProps);
-
         return <div>{render(childrenProps)}</div>;
     };
 }
