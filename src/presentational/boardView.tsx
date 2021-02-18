@@ -78,6 +78,17 @@ const Board = (props: BoardViewProps) => {
         console.log(json);
     };
 
+    const clearHandler = async () => {
+        const newCells = boardStatus.map((c) => {
+            return {
+                ...c,
+                live: false,
+            };
+        });
+
+        setCells(newCells);
+    };
+
     return (
         <div>
             {isEditor ? (
@@ -132,9 +143,14 @@ const Board = (props: BoardViewProps) => {
                     stop
                 </button>
                 {isEditor ? (
-                    <button type={'button'} onClick={printHandler}>
-                        print
-                    </button>
+                    <>
+                        <button type={'button'} onClick={printHandler}>
+                            print
+                        </button>
+                        <button type={'button'} onClick={clearHandler}>
+                            clearAll
+                        </button>
+                    </>
                 ) : (
                     <></>
                 )}
