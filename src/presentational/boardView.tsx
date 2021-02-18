@@ -1,5 +1,5 @@
 import React from 'react';
-import { isRight, isBottom } from '../utils/helper';
+import { isRight, isBottom, restoreCells, CompressCell } from '../utils/helper';
 
 const reloadPage = (): void => window.location.reload();
 
@@ -29,16 +29,44 @@ const generateStyle: GenerateStyle = (cellSize, live, boardSize, index) => {
 };
 
 const Board = (props: BoardViewProps) => {
-    const { boardSize, cellSize, boardStatus, start, stop } = props;
+    const { boardSize, cellSize, boardStatus, start, stop, setCells } = props;
 
-    const clickHandler = async (cell: Cell) => {
-        console.log(cell.id);
-        cell.live = true;
+    const cellClickHandler = async (cell: Cell) => {
+        const cs = [...boardStatus];
+        const newCells = cs.map((c) => {
+            return {
+                ...c,
+                live: c.id === cell.id ? !c.live : c.live,
+            };
+        });
+        setCells(newCells);
+    };
+
+    const printHandler = async () => {
+        const compressCells = boardStatus.map((cell) => {
+            return {
+                id: cell.id,
+                live: cell.live,
+            };
+        });
+        const json = JSON.stringify(compressCells);
+        console.log(json);
     };
 
     return (
         <div>
             <h1>life gaming</h1>
+
+            <textarea
+                onChange={(val) => {
+                    const cCells = JSON.parse(
+                        val.currentTarget.value
+                    ) as CompressCell[];
+
+                    const cells = restoreCells(cCells);
+                    setCells(cells);
+                }}
+            />
 
             <div>
                 <button type="button" onClick={start}>
@@ -49,6 +77,9 @@ const Board = (props: BoardViewProps) => {
                 </button>
                 <button type={'button'} onClick={stop}>
                     stop
+                </button>
+                <button type={'button'} onClick={printHandler}>
+                    print
                 </button>
             </div>
 
@@ -64,7 +95,7 @@ const Board = (props: BoardViewProps) => {
                                     index
                                 )}
                                 onClick={async () => {
-                                    await clickHandler(cell);
+                                    await cellClickHandler(cell);
                                 }}
                             />
                             {isRight(boardSize, index) && <br />}
