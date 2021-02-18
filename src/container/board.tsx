@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createNeighbourIndex } from '../utils/helper';
+import { setInitCellNeighbours } from '../utils/helper';
 
 const initCell = (): Cell => ({
     id: '',
@@ -9,15 +9,6 @@ const initCell = (): Cell => ({
 
 const createBoardStatus = (size: number): Cell[] =>
     new Array(size * size).fill(initCell());
-
-type CellNeighbours = { neighbours: number[] };
-
-const setInitCellNeighbours = (
-    size: number,
-    index: number
-): CellNeighbours => ({
-    neighbours: createNeighbourIndex(size, index),
-});
 
 type CellLive = { live: boolean };
 const setInitCellLive = (spawnRate: number): CellLive => ({
@@ -132,6 +123,13 @@ class Board extends React.Component {
         clearInterval(this.state.timerId);
     };
 
+    setCells = (cells: Cell[]) => {
+        this.setState({
+            ...this.state,
+            boardStatus: cells,
+        });
+    };
+
     render = () => {
         const { boardSize, cellSize, render } = this.props;
         const { boardStatus }: { boardStatus: Cell[] } = this.state;
@@ -142,6 +140,7 @@ class Board extends React.Component {
             boardStatus,
             start: this.start,
             stop: this.stop,
+            setCells: this.setCells,
         };
 
         return <div>{render(childrenProps)}</div>;
