@@ -1,4 +1,4 @@
-import { restoreCells } from './helper';
+import { restoreCellsFromIpfs } from './helper';
 
 export const loadCellsFromContentUrl = async (url: string): Promise<Cell[]> => {
     const resp = await fetch(url);
@@ -11,5 +11,5 @@ export const loadCellsFromContentUrl = async (url: string): Promise<Cell[]> => {
     if (!exportedCell.size) {
         return [];
     }
-    return restoreCells(exportedCell);
+    return restoreCellsFromIpfs(exportedCell);
 };
