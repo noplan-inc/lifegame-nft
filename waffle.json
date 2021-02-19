@@ -1,0 +1,4 @@
+{
+  "sourceDirectory": "./contracts",
+  "outputDirectory": "./.artifact"
+}
