@@ -8,11 +8,14 @@ import { useEffect } from 'react';
 import { loadCellsFromContentUrl } from '../utils/loader';
 import BoardView from '../presentational/boardView';
 import Board from './board';
+import { BidForm } from './bid';
+
+type BoardTable = { [key: string]: Cell[] };
 
 export const ListZora: React.FC<{}> = () => {
     const { library, chainId } = useWeb3React<Web3Provider>();
 
-    const [boards, setBoards] = useState<Cell[][]>([]);
+    const [boards, setBoards] = useState<BoardTable>({});
 
     useEffect(() => {
         async function f() {
@@ -26,23 +29,26 @@ export const ListZora: React.FC<{}> = () => {
 
             const big = await zora.fetchTotalMedia();
 
-            const _boards: Cell[][] = [];
+            const newBoards = { ...boards };
 
             // 0, 1 => stash data
             for (let i = 2; i < 2 + big.toNumber(); i++) {
                 const contentUrl = await zora.fetchContentURI(i);
                 const cells = await loadCellsFromContentUrl(contentUrl);
-                _boards.push(cells);
+
+                newBoards[i.toString()] = cells;
             }
 
-            setBoards([..._boards]);
+            setBoards(newBoards);
         }
+
         f();
     }, [library, chainId]);
 
     return (
         <>
-            {boards.map((b, index) => {
+            {Object.keys(boards).map((key, index) => {
+                const cells = boards[key];
                 return (
                     <div key={index}>
                         <Board
@@ -50,12 +56,13 @@ export const ListZora: React.FC<{}> = () => {
                             intervalTime={500}
                             cellSize={20}
                             spawnRate={25}
-                            boardSize={Math.sqrt(b.length)}
-                            initStatus={b}
+                            boardSize={Math.sqrt(cells.length)}
+                            initStatus={cells}
                             render={(props: BoardViewProps) => (
                                 <BoardView {...props} />
                             )}
                         />
+                        <BidForm mediaId={key} />
                     </div>
                 );
             })}
