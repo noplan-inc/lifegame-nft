@@ -29,7 +29,8 @@
     "build": "react-scripts build && rm -rf docs && mv build docs",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/** --fix"
+    "lint": "eslint src/** --fix",
+    "build:contract": "waffle waffle.json"
   },
   "homepage": ".",
   "eslintConfig": {
@@ -51,12 +52,17 @@
     ]
   },
   "devDependencies": {
+    "@openzeppelin/contracts": "^3.4.0",
+    "@truffle/hdwallet-provider": "^1.2.2",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
     "eslint": "^7.20.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-react": "^7.22.0",
-    "prettier": "^2.2.1"
+    "ethereum-waffle": "^3.2.2",
+    "prettier": "^2.2.1",
+    "truffle": "^5.1.66",
+    "truffle-hdwallet-provider": "^1.0.17"
   }
 }
