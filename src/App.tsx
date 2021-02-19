@@ -1,14 +1,25 @@
 import React from 'react';
 // @ts-ignore
+import { Web3Provider } from '@ethersproject/providers';
+import { useWeb3React } from '@web3-react/core';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
+import {
+    NotificationContainer,
+    NotificationManager,
+} from 'react-notifications';
+
+import { firebaseConfig } from './config/firebase';
 import Board from './container/board';
 import './App.css';
 import BoardView from './presentational/boardView';
-import { Web3Provider } from '@ethersproject/providers';
-import { useWeb3React } from '@web3-react/core';
 import { useEagerConnect, useInactiveListener } from './hooks';
-
 import { injected } from './utils/connectors';
 import { ListZora } from './container/zora';
+
+if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
 
 function App() {
     const {
@@ -26,23 +37,38 @@ function App() {
         }
     }, [activatingConnector, connector]);
 
+    React.useEffect(() => {
+        firebase
+            .auth()
+            .signInAnonymously()
+            .catch((err) => {
+                NotificationManager.error(JSON.stringify(err));
+            });
+    }, []);
+
     const triedEager = useEagerConnect();
 
     useInactiveListener(!triedEager || !!activatingConnector);
 
     return (
         <div className="App">
+            <NotificationContainer />
             <div>
                 connected: {JSON.stringify(triedEager)}, account:{' '}
                 {JSON.stringify({ active, error, activate, setError })}
             </div>
             <div>
                 <button
-                    onClick={() => {
-                        activate(injected).then();
+                    onClick={async () => {
+                        try {
+                            await activate(injected);
+                        } catch (e) {
+                            NotificationManager.error(JSON.stringify(e));
+                            console.error(e);
+                        }
                     }}
                 >
-                    connect
+                    wallet connect
                 </button>
             </div>
             <div>
