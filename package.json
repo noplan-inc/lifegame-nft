@@ -34,7 +34,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint src/** --fix",
     "build:contract": "waffle waffle.json",
-    "deploy:firebase:firestore": "firebase deploy --only firestore:rules"
+    "deploy:firebase:firestore": "firebase deploy --only firestore:rules",
+    "deploy:firebase:hosting": "firebase deploy --only hosting"
   },
   "homepage": ".",
   "eslintConfig": {
