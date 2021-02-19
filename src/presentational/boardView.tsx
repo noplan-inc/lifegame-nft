@@ -23,8 +23,8 @@ const generateStyle: GenerateStyle = (cellSize, live, boardSize, index) => {
     const border = '1px solid #000';
     return {
         display: 'inline-block',
-        width: `${cellSize}px`,
-        height: `${cellSize}px`,
+        width: `${boardSize > 50 ? cellSize / 2 : cellSize}px`,
+        height: `${boardSize > 50 ? cellSize / 2 : cellSize}px`,
         margin: 0,
         padding: 0,
         lineHeight: 0,
@@ -105,13 +105,13 @@ const Board = (props: BoardViewProps) => {
                         }}
                     />
                     <input
-                        placeholder={'boardSize must be able to sqrt'}
+                        placeholder={'0 < boardSize < 100'}
                         onChange={(val) => {
                             const boardSize = parseInt(val.currentTarget.value);
 
-                            if (boardSize > 50 || isNaN(boardSize)) {
+                            if (boardSize > 100 || isNaN(boardSize)) {
                                 alert(
-                                    `boardSize is max(50). ${boardSize} is invalid.`
+                                    `boardSize is max(60). ${boardSize} is invalid.`
                                 );
                                 return;
                             }
