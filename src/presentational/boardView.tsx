@@ -62,7 +62,7 @@ const Board = (props: BoardViewProps) => {
     };
 
     const isEditor = mode === 'editor';
-    const isViewer = mode === 'viewer';
+    // const isViewer = mode === 'viewer';
 
     const printHandler = async () => {
         const compressCells = boardStatus.map((cell) => {
