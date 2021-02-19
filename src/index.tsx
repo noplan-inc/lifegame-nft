@@ -8,6 +8,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import RecoilLogger from 'recoil-logger';
 
 import './index.css';
+import 'react-notifications/lib/notifications.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
