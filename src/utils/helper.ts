@@ -1,3 +1,5 @@
+import { ContentData, NFT } from '../models';
+
 type CheckPosition = (size: number, index: number) => boolean;
 
 export const isTop: CheckPosition = (size, index) => index < size;
@@ -89,21 +91,23 @@ export const setInitCellNeighbours = (
     neighbours: createNeighbourIndex(size, index),
 });
 
-export interface ExportedCells {
-    cells: CompressCell[];
-    size: number;
-}
+export const restoreCellsFromFirestore = (ecs: NFT): Cell[] => {
+    if (!ecs.compressCells) return [];
+    const content = JSON.parse(ecs.compressCells) as ContentData;
 
-export interface CompressCell {
-    id: string;
-    live: boolean;
-}
-
-export const restoreCells = (ecs: ExportedCells): Cell[] => {
-    return ecs.cells.map((cc, index) => {
+    return content.cells.map((cc, index) => {
         return {
             ...cc,
             ...setInitCellNeighbours(ecs.size, index),
+        };
+    });
+};
+
+export const restoreCellsFromIpfs = (cd: ContentData): Cell[] => {
+    return cd.cells.map((cc, index) => {
+        return {
+            ...cc,
+            ...setInitCellNeighbours(cd.size, index),
         };
     });
 };
