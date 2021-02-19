@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import {
     isRight,
     isBottom,
-    restoreCells,
-    ExportedCells,
     setInitCellNeighbours,
     createBoardStatus,
     setInitCellId,
     setInitCellLive,
+    restoreCellsFromIpfs,
 } from '../utils/helper';
+import { ContentData } from '../models';
 
 const reloadPage = (): void => window.location.reload();
 
@@ -62,6 +62,7 @@ const Board = (props: BoardViewProps) => {
     };
 
     const isEditor = mode === 'editor';
+    const isViewer = mode === 'viewer';
 
     const printHandler = async () => {
         const compressCells = boardStatus.map((cell) => {
@@ -97,9 +98,9 @@ const Board = (props: BoardViewProps) => {
                         onChange={(val) => {
                             const eCells = JSON.parse(
                                 val.currentTarget.value
-                            ) as ExportedCells;
+                            ) as ContentData;
 
-                            const cells = restoreCells(eCells);
+                            const cells = restoreCellsFromIpfs(eCells);
                             setCells(cells);
                         }}
                     />
