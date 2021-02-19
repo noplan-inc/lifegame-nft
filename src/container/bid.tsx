@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { Zora, constructBid, approveERC20 } from '@zoralabs/zdk';
+import { Zora, constructBid } from '@zoralabs/zdk';
 import { Web3Provider } from '@ethersproject/providers';
 import PropTypes from 'prop-types';
 import { MaxUint256 } from '@ethersproject/constants';
