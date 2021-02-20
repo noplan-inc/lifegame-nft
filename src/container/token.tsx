@@ -28,7 +28,7 @@ export const TokenBalanceSelectOption: React.FC<TokenBalanceSelectOptionProps> =
         });
     }, [balance]);
 
-    if (!balance) return <option />;
+    if (!balance) return <option value={tokenName}>{tokenName}: 0</option>;
 
     return (
         <option value={tokenName}>

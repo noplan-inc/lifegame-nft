@@ -34,7 +34,7 @@ const ABIs = Object.values(Bep20).map((address) => {
 if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
 
 function App() {
-    const { connector, library } = useWeb3React<Web3Provider>();
+    const { connector, library, active } = useWeb3React<Web3Provider>();
 
     const [activatingConnector, setActivatingConnector] = React.useState<any>();
     React.useEffect(() => {
@@ -61,7 +61,7 @@ function App() {
             <Router>
                 <Navbar />
 
-                {!library ? (
+                {!library || !active ? (
                     <LP />
                 ) : (
                     <SWRConfig
