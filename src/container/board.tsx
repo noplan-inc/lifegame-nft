@@ -19,6 +19,7 @@ type BoardContainerProps = {
 type BoardState = {
     boardStatus: Cell[];
     timerId: number;
+    isPlaying: boolean;
 };
 
 class Board extends React.Component {
@@ -27,6 +28,7 @@ class Board extends React.Component {
     state: BoardState = {
         boardStatus: [],
         timerId: 0,
+        isPlaying: false,
     };
 
     componentDidMount = (): void => {
@@ -109,11 +111,16 @@ class Board extends React.Component {
         this.setState({
             ...this.state,
             timerId,
+            isPlaying: true,
         });
     };
 
     stop = () => {
         clearInterval(this.state.timerId);
+        this.setState({
+            ...this.state,
+            isPlaying: false,
+        });
     };
 
     setCells = (cells: Cell[]) => {
@@ -125,13 +132,17 @@ class Board extends React.Component {
 
     render = () => {
         const { boardSize, cellSize, render, mode } = this.props;
-        const { boardStatus }: { boardStatus: Cell[] } = this.state;
+        const {
+            boardStatus,
+            isPlaying,
+        }: { boardStatus: Cell[]; isPlaying: boolean } = this.state;
 
         const childrenProps: BoardViewProps = {
             boardSize,
             cellSize,
             boardStatus,
             mode,
+            isPlaying,
             start: this.start,
             stop: this.stop,
             setCells: this.setCells,
