@@ -9,6 +9,7 @@ import {
     restoreCellsFromIpfs,
 } from '../utils/helper';
 import { ContentData } from '../models';
+import { TWButton } from './button';
 
 const reloadPage = (): void => window.location.reload();
 
@@ -28,12 +29,15 @@ const generateStyle: GenerateStyle = (cellSize, live, boardSize, index) => {
         margin: 0,
         padding: 0,
         lineHeight: 0,
-        background: live ? '#000' : 'rgba(0,0,0,0)',
+        background: live ? 'rgb(84,188,92)' : 'rgba(0,0,0,0)',
         boxSizing: 'border-box',
         borderTop: border,
         borderLeft: border,
         borderRight: isRight(boardSize, index) ? border : 'none',
         borderBottom: isBottom(boardSize, index) ? border : 'none',
+        boxShadow: live
+            ? '0 0 5px rgb(84,188,92), 0 0 5px rgb(84,188,92), 0 0 5px rgb(84,188,92), 0 0 5px rgb(84,188,92)'
+            : 'none',
     };
 };
 
@@ -133,30 +137,6 @@ const Board = (props: BoardViewProps) => {
                 <></>
             )}
 
-            <div>
-                <button type="button" onClick={start}>
-                    start
-                </button>
-                <button type="button" onClick={reloadPage}>
-                    reload
-                </button>
-                <button type={'button'} onClick={stop}>
-                    stop
-                </button>
-                {isEditor ? (
-                    <>
-                        <button type={'button'} onClick={printHandler}>
-                            print
-                        </button>
-                        <button type={'button'} onClick={clearHandler}>
-                            clearAll
-                        </button>
-                    </>
-                ) : (
-                    <></>
-                )}
-            </div>
-
             <div style={{ fontSize: 0 }}>
                 {boardStatus.map(
                     (cell: Cell, index: number): React.ReactNode => (
@@ -175,6 +155,20 @@ const Board = (props: BoardViewProps) => {
                             {isRight(bSize, index) && <br />}
                         </span>
                     )
+                )}
+            </div>
+
+            <div className="p-4">
+                <TWButton onClick={start}>start</TWButton>
+                <TWButton onClick={reloadPage}>reload</TWButton>
+                <TWButton onClick={stop}>stop</TWButton>
+                {isEditor ? (
+                    <>
+                        <TWButton onClick={printHandler}>print</TWButton>
+                        <TWButton onClick={clearHandler}>clearAll</TWButton>
+                    </>
+                ) : (
+                    <></>
                 )}
             </div>
         </div>
