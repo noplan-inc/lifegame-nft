@@ -5,10 +5,13 @@ import { Web3Provider } from '@ethersproject/providers';
 import PropTypes from 'prop-types';
 import { MaxUint256 } from '@ethersproject/constants';
 import { BaseErc20Factory } from '@zoralabs/core/dist/typechain';
+import { parseEther } from 'ethers/lib/utils';
 
 import bsc from '../addresses/bsc-testnet.json';
 import { injected } from '../utils/connectors';
-import { parseEther } from 'ethers/lib/utils';
+import { TokenBalanceSelectOption } from './token';
+import { Bep20 } from '../addresses/bsc-testnet-bep20';
+import { NotificationManager } from 'react-notifications';
 
 interface BidButtonProps {
     mediaId: string;
@@ -23,10 +26,11 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
     } = useWeb3React<Web3Provider>();
     const [balance, setBalance] = useState('');
     const [share, setShare] = useState(0);
+    const [currency, setCurrency] = useState('');
 
     const bidHandler = async () => {
         if (!library || !chainId || !account) {
-            activate(injected).catch((err) => console.error);
+            activate(injected).catch((err) => console.error(err));
             return;
         }
 
@@ -36,8 +40,6 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
 
         const bidBalance = parseEther(balance);
 
-        console.log(`bidBalance: ${bidBalance}, realBalance: ${realBalance}`);
-
         if (bidBalance > realBalance) {
             alert(
                 `your balance is ${realBalance}. ${bidBalance} is too expensive!!`
@@ -45,27 +47,51 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
             return;
         }
 
-        // BEP20 Test token contract address
-        const TTN = '0x96f52946c55f7b810ad1e057649a2fafaa8fdc24';
-
         const zora = new Zora(signer, chainId, bsc.media, bsc.market);
 
-        const erc20 = BaseErc20Factory.connect(TTN, signer);
+        const contractAddress = Bep20[currency];
+        const erc20 = BaseErc20Factory.connect(contractAddress, signer);
         await erc20.approve(zora.marketAddress, MaxUint256);
 
-        const bid = constructBid(TTN, bidBalance, account, account, share);
-
-        // gas required exceeds allowance (30000000) or always failing transaction
+        const bid = constructBid(
+            contractAddress,
+            bidBalance,
+            account,
+            account,
+            share
+        );
 
         const tx = await zora.setBid(mediaId, bid);
+        NotificationManager.info(`bid txhash: ${tx.hash}`);
         console.log(tx.hash);
 
         await tx.wait(4);
-        alert('success!');
+        NotificationManager.success('success to send bid tx!');
     };
 
     return (
         <>
+            <select
+                onChange={(val) => {
+                    const c = val.currentTarget.value;
+                    if (!c) return;
+
+                    if (!Bep20.hasOwnProperty(c)) return;
+
+                    setCurrency(c);
+                }}
+            >
+                {Object.entries(Bep20).map(([tokenName, address]) => {
+                    return (
+                        <TokenBalanceSelectOption
+                            address={address}
+                            tokenName={tokenName}
+                            key={address}
+                        />
+                    );
+                })}
+            </select>
+
             <label>
                 <input
                     type={'text'}
