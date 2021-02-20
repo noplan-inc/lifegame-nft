@@ -27,6 +27,12 @@ service cloud.firestore {
 
     match /nfts/{nft_id} {
       allow read: if isAuthenticated();
+
+
+      match /bids/{bid_id} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+      }
     }
   }
 }
