@@ -124,7 +124,7 @@ export const BidForm: React.FC<BidButtonProps> = ({ nft }) => {
                         setBalance(value);
                     }}
                 />
-                TTN
+                {currency}
             </label>
 
             <label>
