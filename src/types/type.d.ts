@@ -106,3 +106,11 @@ declare module 'react-notifications' {
         static remove(notification: Notification): void;
     }
 }
+
+declare module '*/bsc-testnet-bep20.json' {
+    type Address = string;
+    type Tokens = { [key: string]: Address };
+
+    const value: Tokens;
+    export = value;
+}
