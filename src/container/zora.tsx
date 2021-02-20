@@ -74,7 +74,8 @@ type BoardTables = { [key: string]: NFT };
 
 export const ListZora: React.FC<{}> = () => {
     const [nfts, loading, error] = useCollectionData<NFT>(
-        firebase.firestore().collection('nfts')
+        firebase.firestore().collection('nfts'),
+        { idField: 'documentId' }
     );
     const [boards, setBoards] = useState<BoardTables>({});
 
@@ -130,7 +131,7 @@ export const ListZora: React.FC<{}> = () => {
                                 <BoardView {...props} />
                             )}
                         />
-                        <BidForm mediaId={key} />
+                        <BidForm nft={b} />
                     </div>
                 );
             })}

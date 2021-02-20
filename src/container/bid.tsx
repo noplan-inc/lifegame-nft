@@ -5,7 +5,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import PropTypes from 'prop-types';
 import { MaxUint256 } from '@ethersproject/constants';
 import { BaseErc20Factory } from '@zoralabs/core/dist/typechain';
-import { parseEther } from 'ethers/lib/utils';
+import { formatEther, parseEther } from 'ethers/lib/utils';
+import firebase from 'firebase/app';
 
 import bsc from '../addresses/bsc-testnet.json';
 import { injected } from '../utils/connectors';
@@ -14,12 +15,15 @@ import { Bep20 } from '../addresses/bsc-testnet-bep20';
 import { NotificationManager } from 'react-notifications';
 import { useRecoilValue } from 'recoil';
 import { tokenState } from '../atoms/tokenState';
+import { NFT } from '../models';
+import { BiddingList } from './biddingList';
+import { BigNumber } from 'ethers';
 
 interface BidButtonProps {
-    mediaId: string;
+    nft: NFT;
 }
 
-export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
+export const BidForm: React.FC<BidButtonProps> = ({ nft }) => {
     const {
         library,
         chainId,
@@ -41,9 +45,13 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
 
         const bidBalance = parseEther(balance);
 
-        const realBalance = walletBalance[currency];
-        if (realBalance < bidBalance) {
-            NotificationManager.error(`your balance: ${realBalance}`);
+        const realBalance = walletBalance[currency] as BigNumber;
+        if (realBalance.lt(bidBalance)) {
+            console.error(formatEther(realBalance));
+            console.error(formatEther(bidBalance));
+            NotificationManager.error(
+                `your balance: ${formatEther(realBalance)}`
+            );
             return;
         }
 
@@ -61,11 +69,26 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
             share
         );
 
-        const tx = await zora.setBid(mediaId, bid);
+        const tx = await zora.setBid(nft.mediaId, bid);
         NotificationManager.info(`bid txhash: ${tx.hash}`);
         console.log(tx.hash);
 
-        await tx.wait(4);
+        await tx.wait(2);
+        const db = firebase.firestore();
+
+        await db
+            .collection('nfts')
+            .doc(nft.documentId)
+            .collection('bids')
+            .doc(tx.hash)
+            .set({
+                amount: bidBalance.toString(),
+                bidder: bid.bidder,
+                currency: currency,
+                currencyAddress: contractAddress,
+                sellOn: bid.sellOnShare.value.toString(),
+            });
+
         NotificationManager.success('success to send bid tx!');
     };
 
@@ -117,10 +140,11 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
             <button type={'button'} onClick={bidHandler}>
                 Bid
             </button>
+            <BiddingList nft={nft} />
         </>
     );
 };
 
 BidForm.propTypes = {
-    mediaId: PropTypes.string.isRequired,
+    nft: PropTypes.any,
 };
