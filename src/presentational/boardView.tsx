@@ -20,7 +20,7 @@ type GenerateStyle = (
 ) => React.CSSProperties;
 
 const generateStyle: GenerateStyle = (cellSize, live, boardSize, index) => {
-    const border = '1px solid #000';
+    const border = '1px solid rgba(0,0,0,0.3)';
     return {
         display: 'inline-block',
         width: `${boardSize > 50 ? cellSize / 2 : cellSize}px`,
@@ -28,7 +28,7 @@ const generateStyle: GenerateStyle = (cellSize, live, boardSize, index) => {
         margin: 0,
         padding: 0,
         lineHeight: 0,
-        background: live ? '#000' : '#fff',
+        background: live ? '#000' : 'rgba(0,0,0,0)',
         boxSizing: 'border-box',
         borderTop: border,
         borderLeft: border,
