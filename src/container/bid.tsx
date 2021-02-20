@@ -12,6 +12,8 @@ import { injected } from '../utils/connectors';
 import { TokenBalanceSelectOption } from './token';
 import { Bep20 } from '../addresses/bsc-testnet-bep20';
 import { NotificationManager } from 'react-notifications';
+import { useRecoilValue } from 'recoil';
+import { tokenState } from '../atoms/tokenState';
 
 interface BidButtonProps {
     mediaId: string;
@@ -27,6 +29,7 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
     const [balance, setBalance] = useState('');
     const [share, setShare] = useState(0);
     const [currency, setCurrency] = useState('');
+    const walletBalance = useRecoilValue(tokenState);
 
     const bidHandler = async () => {
         if (!library || !chainId || !account) {
@@ -36,14 +39,11 @@ export const BidForm: React.FC<BidButtonProps> = ({ mediaId }) => {
 
         const signer = library.getSigner();
 
-        const realBalance = await signer.getBalance();
-
         const bidBalance = parseEther(balance);
 
-        if (bidBalance > realBalance) {
-            alert(
-                `your balance is ${realBalance}. ${bidBalance} is too expensive!!`
-            );
+        const realBalance = walletBalance[currency];
+        if (realBalance < bidBalance) {
+            NotificationManager.error(`your balance: ${realBalance}`);
             return;
         }
 

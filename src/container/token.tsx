@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import useSWR from 'swr';
 import { formatEther } from 'ethers/lib/utils';
+import { useSetRecoilState } from 'recoil';
+import { tokenState } from '../atoms/tokenState';
 
 interface TokenBalanceSelectOptionProps {
     tokenName: string;
@@ -15,8 +17,18 @@ export const TokenBalanceSelectOption: React.FC<TokenBalanceSelectOptionProps> =
 }) => {
     const { account } = useWeb3React<Web3Provider>();
     const { data: balance } = useSWR([address, 'balanceOf', account]);
+    const setBalance = useSetRecoilState(tokenState);
 
-    if (!balance) return <option></option>;
+    useEffect(() => {
+        if (!balance) return;
+        setBalance((prevState) => {
+            const newState = { ...prevState };
+            newState[tokenName] = balance.toString();
+            return newState;
+        });
+    }, [balance]);
+
+    if (!balance) return <option />;
 
     return (
         <option value={tokenName}>
