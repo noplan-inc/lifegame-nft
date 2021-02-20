@@ -18,6 +18,7 @@ import { tokenState } from '../atoms/tokenState';
 import { NFT } from '../models';
 import { BiddingList } from './biddingList';
 import { BigNumber } from 'ethers';
+import { TWButton } from '../presentational/button';
 
 interface BidButtonProps {
     nft: NFT;
@@ -137,9 +138,7 @@ export const BidForm: React.FC<BidButtonProps> = ({ nft }) => {
                 % sell on share
             </label>
 
-            <button type={'button'} onClick={bidHandler}>
-                Bid
-            </button>
+            <TWButton onClick={bidHandler}>Bid</TWButton>
             <BiddingList nft={nft} />
         </>
     );

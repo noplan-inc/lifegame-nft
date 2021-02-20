@@ -11,6 +11,7 @@ import bsc from '../addresses/bsc-testnet.json';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { NotificationManager } from 'react-notifications';
+import { TWButton } from '../presentational/button';
 
 interface BiddingListProps {
     nft: NFT;
@@ -79,7 +80,7 @@ export const BiddingList: React.FC<BiddingListProps> = ({ nft }) => {
     return (
         <div>
             {/* TODO DELETE */}
-            <button onClick={fetchBalanceHandler}>fetch</button>
+            <TWButton onClick={fetchBalanceHandler}>fetch</TWButton>
             <ul>
                 {bids.map((bid, index) => {
                     return (
@@ -109,14 +110,13 @@ export const BiddingList: React.FC<BiddingListProps> = ({ nft }) => {
                             , amount: {formatEther(BigNumber.from(bid.amount))},
                             sellOnShare:{' '}
                             {formatEther(BigNumber.from(bid.sellOn))}%
-                            <button
-                                type={'button'}
+                            <TWButton
                                 onClick={async () => {
                                     await acceptBidHandler(bid);
                                 }}
                             >
                                 acceptBid(for owner)
-                            </button>
+                            </TWButton>
                         </li>
                     );
                 })}
