@@ -5,6 +5,8 @@ import { useWeb3React } from '@web3-react/core';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import { ethFetcher } from 'swr-eth';
+import { SWRConfig } from 'swr';
 
 import {
     NotificationContainer,
@@ -18,6 +20,13 @@ import BoardView from './presentational/boardView';
 import { useEagerConnect, useInactiveListener } from './hooks';
 import { injected } from './utils/connectors';
 import { ListZora } from './container/zora';
+import BEP20ABI from './abi/BEP20.abi.json';
+import { Bep20 } from './addresses/bsc-testnet-bep20';
+
+const ABIs = Object.values(Bep20).map((address) => {
+    const abi = BEP20ABI as any;
+    return [address, abi];
+});
 
 if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
 
@@ -28,6 +37,7 @@ function App() {
         error,
         activate,
         setError,
+        library,
     } = useWeb3React<Web3Provider>();
 
     const [activatingConnector, setActivatingConnector] = React.useState<any>();
@@ -52,40 +62,54 @@ function App() {
 
     return (
         <div className="App">
-            <NotificationContainer />
-            <div>
-                connected: {JSON.stringify(triedEager)}, account:{' '}
-                {JSON.stringify({ active, error, activate, setError })}
-            </div>
-            <div>
-                <button
-                    onClick={async () => {
-                        try {
-                            await activate(injected);
-                        } catch (e) {
-                            NotificationManager.error(JSON.stringify(e));
-                            console.error(e);
-                        }
+            {!active || !library ? (
+                <div>
+                    <button
+                        onClick={async () => {
+                            try {
+                                await activate(injected);
+                            } catch (e) {
+                                NotificationManager.error(JSON.stringify(e));
+                                console.error(e);
+                            }
+                        }}
+                    >
+                        wallet connect
+                    </button>
+                </div>
+            ) : (
+                <SWRConfig
+                    value={{
+                        fetcher: ethFetcher(
+                            library, // @ts-ignore
+                            new Map<string, any>(ABIs)
+                        ),
                     }}
                 >
-                    wallet connect
-                </button>
-            </div>
-            <div>
-                <h2>editor</h2>
-                <Board
-                    mode={'editor'}
-                    intervalTime={500}
-                    cellSize={20}
-                    spawnRate={25}
-                    boardSize={25}
-                    render={(props: BoardViewProps) => <BoardView {...props} />}
-                />
-            </div>
-            <div>
-                <h2>market</h2>
-                <ListZora />
-            </div>
+                    <NotificationContainer />
+                    <div>
+                        {JSON.stringify({ active, error, activate, setError })}
+                    </div>
+
+                    <div>
+                        <h2>editor</h2>
+                        <Board
+                            mode={'editor'}
+                            intervalTime={500}
+                            cellSize={20}
+                            spawnRate={25}
+                            boardSize={25}
+                            render={(props: BoardViewProps) => (
+                                <BoardView {...props} />
+                            )}
+                        />
+                    </div>
+                    <div>
+                        <h2>market</h2>
+                        <ListZora />
+                    </div>
+                </SWRConfig>
+            )}
         </div>
     );
 }
