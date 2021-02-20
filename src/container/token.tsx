@@ -23,7 +23,7 @@ export const TokenBalanceSelectOption: React.FC<TokenBalanceSelectOptionProps> =
         if (!balance) return;
         setBalance((prevState) => {
             const newState = { ...prevState };
-            newState[tokenName] = balance.toString();
+            newState[tokenName] = balance;
             return newState;
         });
     }, [balance]);
