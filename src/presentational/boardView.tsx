@@ -1,4 +1,16 @@
 import React, { useState } from 'react';
+
+import {
+    constructBidShares,
+    constructMediaData,
+    generateMetadata,
+    sha256FromBuffer,
+    Zora,
+} from '@zoralabs/zdk';
+import { Web3Provider } from '@ethersproject/providers';
+import { useWeb3React } from '@web3-react/core';
+import IPFS from 'ipfs';
+
 import {
     isRight,
     isBottom,
@@ -10,6 +22,10 @@ import {
 } from '../utils/helper';
 import { ContentData } from '../models';
 import { TWButton } from './button';
+import bsc from '../addresses/bsc-testnet.json';
+import { uploadIpfs } from '../utils/ipfs';
+import { NotificationManager } from 'react-notifications';
+import firebase from 'firebase/app';
 
 const reloadPage = (): void => window.location.reload();
 
@@ -50,9 +66,11 @@ const Board = (props: BoardViewProps) => {
         stop,
         setCells,
         mode,
+        isPlaying,
     } = props;
 
     const [bSize, setBoardSize] = useState(boardSize);
+    const { library, chainId } = useWeb3React<Web3Provider>();
 
     const cellClickHandler = async (cell: Cell) => {
         const cs = [...boardStatus];
@@ -92,6 +110,82 @@ const Board = (props: BoardViewProps) => {
         });
 
         setCells(newCells);
+    };
+
+    const mintHandler = async () => {
+        if (!library || !chainId) return;
+
+        if (isPlaying) {
+            NotificationManager.error('stop game before mint');
+            return;
+        }
+
+        const signer = library.getSigner();
+
+        const zora = new Zora(signer, chainId, bsc.media, bsc.market);
+
+        const metadataJSON = generateMetadata('zora-20210101', {
+            description: '',
+            mimeType: 'text/plain',
+            name: '',
+            version: 'zora-20210101',
+        });
+
+        const compressCells = boardStatus.map((cell) => {
+            return {
+                id: cell.id,
+                live: cell.live,
+            };
+        });
+        const output = {
+            size: Math.sqrt(boardStatus.length),
+            cells: compressCells,
+        };
+        const json = JSON.stringify(output);
+
+        const contentHash = sha256FromBuffer(Buffer.from(json));
+        const metadataHash = sha256FromBuffer(Buffer.from(metadataJSON));
+
+        const node = await IPFS.create();
+        const tokenURI = await uploadIpfs(json, node);
+        const metadataURI = await uploadIpfs(metadataJSON, node);
+
+        const mediaData = constructMediaData(
+            tokenURI,
+            metadataURI,
+            contentHash,
+            metadataHash
+        );
+
+        const bidShares = constructBidShares(
+            10, // creator share
+            90, // owner share
+            0 // prevOwner share
+        );
+        const tx = await zora.mint(mediaData, bidShares);
+
+        NotificationManager.info(tx.hash);
+        console.log(tx.hash);
+
+        await tx.wait(2);
+        let maxMediaId = 0;
+
+        try {
+            // fetch maxMediaId
+            for (let i = 0; i < 10000; i++) {
+                await zora.fetchContentURI(i);
+                maxMediaId += 1;
+            }
+        } catch (e) {
+            const db = firebase.firestore();
+            await db.collection('nfts').add({
+                mediaId: maxMediaId,
+                size: output.size,
+                compressCells: output.cells,
+            });
+        }
+
+        NotificationManager.success('success mint');
     };
 
     return (
@@ -166,6 +260,12 @@ const Board = (props: BoardViewProps) => {
                     <>
                         <TWButton onClick={printHandler}>print</TWButton>
                         <TWButton onClick={clearHandler}>clearAll</TWButton>
+                        <TWButton
+                            className="hover:bg-blue-500"
+                            onClick={mintHandler}
+                        >
+                            mint
+                        </TWButton>
                     </>
                 ) : (
                     <></>
