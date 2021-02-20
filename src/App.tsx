@@ -7,7 +7,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import { ethFetcher } from 'swr-eth';
 import { SWRConfig } from 'swr';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import {
     NotificationContainer,
@@ -17,15 +17,14 @@ import {
 import { firebaseConfig } from './config/firebase';
 
 import './App.css';
-
 import { useEagerConnect, useInactiveListener } from './hooks';
-import { injected } from './utils/connectors';
-
 import BEP20ABI from './abi/BEP20.abi.json';
 import { Bep20 } from './addresses/bsc-testnet-bep20';
 import { Home } from './pages/home';
 import { Editor } from './pages/editor';
 import { Collection } from './pages/collection';
+import { Navbar } from './presentational/navbar';
+import { LP } from './pages/lp';
 
 const ABIs = Object.values(Bep20).map((address) => {
     const abi = BEP20ABI as any;
@@ -35,12 +34,7 @@ const ABIs = Object.values(Bep20).map((address) => {
 if (firebase.apps.length === 0) firebase.initializeApp(firebaseConfig);
 
 function App() {
-    const {
-        connector,
-        active,
-        activate,
-        library,
-    } = useWeb3React<Web3Provider>();
+    const { connector, library } = useWeb3React<Web3Provider>();
 
     const [activatingConnector, setActivatingConnector] = React.useState<any>();
     React.useEffect(() => {
@@ -65,23 +59,10 @@ function App() {
     return (
         <div className="App">
             <Router>
-                {!active || !library ? (
-                    <div>
-                        <button
-                            onClick={async () => {
-                                try {
-                                    await activate(injected);
-                                } catch (e) {
-                                    NotificationManager.error(
-                                        JSON.stringify(e)
-                                    );
-                                    console.error(e);
-                                }
-                            }}
-                        >
-                            wallet connect
-                        </button>
-                    </div>
+                <Navbar />
+
+                {!library ? (
+                    <LP />
                 ) : (
                     <SWRConfig
                         value={{
@@ -91,19 +72,6 @@ function App() {
                             ),
                         }}
                     >
-                        <nav>
-                            <ul>
-                                <li>
-                                    <Link to={'/'}>home</Link>
-                                </li>
-                                <li>
-                                    <Link to={'/editor'}>editor</Link>
-                                </li>
-                                <li>
-                                    <Link to={'/collection'}>Collection</Link>
-                                </li>
-                            </ul>
-                        </nav>
                         <NotificationContainer />
                         <Switch>
                             <Route exact path={'/'}>
