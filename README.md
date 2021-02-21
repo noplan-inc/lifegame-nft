@@ -8,7 +8,26 @@ The Game of Life is
 - access [testnet](https://lifegame-nft.web.app/)
 - connect wallet
 - You can bid any nfts on market.
-- If owner accept bid or set ask, You can get it. 
+- If owner accept bid or set ask, You can get it.
+
+### how to mint nft
+- access [testnet](https://lifegame-nft.web.app/editor)
+- connect wallet
+- type `boardSize` with range(1~100)
+- click `clearAll`
+- click to draw cell
+- click `start` to play it
+- click `stop` and `mint`
+
+If you want to save progress
+- click `print`
+- open developer tools of browser
+- copy json cells in console
+
+If you want to restore progress
+- copy json cells
+- paste in `JOSN input`
+
 
 ## Available Scripts
 
