@@ -94,53 +94,61 @@ export const BidForm: React.FC<BidButtonProps> = ({ nft }) => {
     };
 
     return (
-        <>
-            <select
-                onChange={(val) => {
-                    const c = val.currentTarget.value;
-                    if (!c) return;
+        <div className="grid grid-cols-1">
+            <div className="border rounded px-24 mx-80 bg-opacity-70 bg-purple-400">
+                <div className="grid grid-cols-2">
+                    <p className="font-bold text-3xl col-span-4">Bidding</p>
 
-                    if (!Bep20.hasOwnProperty(c)) return;
+                    <select
+                        onChange={(val) => {
+                            const c = val.currentTarget.value;
+                            if (!c) return;
 
-                    setCurrency(c);
-                }}
-            >
-                {Object.entries(Bep20).map(([tokenName, address]) => {
-                    return (
-                        <TokenBalanceSelectOption
-                            address={address}
-                            tokenName={tokenName}
-                            key={address}
+                            if (!Bep20.hasOwnProperty(c)) return;
+
+                            setCurrency(c);
+                        }}
+                    >
+                        {Object.entries(Bep20).map(([tokenName, address]) => {
+                            return (
+                                <TokenBalanceSelectOption
+                                    address={address}
+                                    tokenName={tokenName}
+                                    key={address}
+                                />
+                            );
+                        })}
+                    </select>
+                    <label>
+                        <input
+                            className="m-4"
+                            type={'text'}
+                            onChange={(val) => {
+                                const value = val.currentTarget.value;
+                                setBalance(value);
+                            }}
                         />
-                    );
-                })}
-            </select>
+                        {currency}
+                    </label>
+                </div>
+                <div className="">
+                    <label>
+                        <input
+                            className="m-4"
+                            type={'number'}
+                            onChange={(val) => {
+                                const value = parseInt(val.currentTarget.value);
+                                setShare(value);
+                            }}
+                        />
+                        % sell on share
+                    </label>
 
-            <label>
-                <input
-                    type={'text'}
-                    onChange={(val) => {
-                        const value = val.currentTarget.value;
-                        setBalance(value);
-                    }}
-                />
-                {currency}
-            </label>
-
-            <label>
-                <input
-                    type={'number'}
-                    onChange={(val) => {
-                        const value = parseInt(val.currentTarget.value);
-                        setShare(value);
-                    }}
-                />
-                % sell on share
-            </label>
-
-            <TWButton onClick={bidHandler}>Bid</TWButton>
+                    <TWButton onClick={bidHandler}>Bid</TWButton>
+                </div>
+            </div>
             <BiddingList nft={nft} />
-        </>
+        </div>
     );
 };
 

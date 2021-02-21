@@ -63,50 +63,64 @@ export const BiddingList: React.FC<BiddingListProps> = ({ nft }) => {
 
     if (error) return <p>{JSON.stringify(error)}</p>;
 
-    if (!bids) return <p>There is no bids. There is your chance.</p>;
+    if (!bids) return <></>;
+
+    if (bids?.length === 0)
+        return (
+            <p className="font-bold text-white my-8">
+                There are no bids, and this is your chance.
+            </p>
+        );
 
     return (
-        <div>
-            <ul>
-                {bids.map((bid, index) => {
-                    return (
-                        <li key={index}>
-                            bidder:{' '}
-                            <a
-                                href={
-                                    'https://testnet.bscscan.com/address/' +
-                                    bid.bidder
-                                }
-                                target={'_blank'}
-                                rel={'noreferrer'}
-                            >
-                                {bid.bidder}
-                            </a>
-                            , currency:{' '}
-                            <a
-                                href={
-                                    'https://testnet.bscscan.com/address/' +
-                                    bid.currencyAddress
-                                }
-                                target={'_blank'}
-                                rel={'noreferrer'}
-                            >
-                                {bid.currency}
-                            </a>
-                            , amount: {formatEther(BigNumber.from(bid.amount))},
-                            sellOnShare:{' '}
-                            {formatEther(BigNumber.from(bid.sellOn))}%
-                            <TWButton
-                                onClick={async () => {
-                                    await acceptBidHandler(bid);
-                                }}
-                            >
-                                acceptBid(for owner)
-                            </TWButton>
-                        </li>
-                    );
-                })}
-            </ul>
+        <div className="grid grid-cols-1 mx-80 my-4 border rounded bg-opacity-70 bg-purple-400">
+            <div className="font-medium text-2xl">Bidders</div>
+            <table className="table-auto">
+                <thead>
+                    <tr>
+                        <th>Bid</th>
+                        <th>Sell-on share</th>
+                        <th>Bidder</th>
+                        <th />
+                    </tr>
+                </thead>
+                <tbody>
+                    {bids.map((bid, index) => {
+                        return (
+                            <tr key={index}>
+                                <td>
+                                    {formatEther(BigNumber.from(bid.amount))}
+                                    {bid.currency}
+                                </td>
+                                <td>
+                                    {formatEther(BigNumber.from(bid.sellOn))}%
+                                </td>
+                                <td>
+                                    <a
+                                        href={
+                                            'https://testnet.bscscan.com/address/' +
+                                            bid.bidder
+                                        }
+                                        target={'_blank'}
+                                        rel={'noreferrer'}
+                                        className="text-blue-100 hover:text-blue-700"
+                                    >
+                                        {bid.bidder}
+                                    </a>
+                                </td>
+                                <TWButton
+                                    className="my-2"
+                                    onClick={async () => {
+                                        await acceptBidHandler(bid);
+                                    }}
+                                >
+                                    acceptBid(for owner)
+                                </TWButton>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
         </div>
     );
 };
