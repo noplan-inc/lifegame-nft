@@ -28,11 +28,6 @@ If you want to restore progress
 - copy json cells
 - paste in `JOSN input`
 
-
-## Available Scripts
-
-In the project directory, you can run:
-
 ## How to develop
 ### `yarn`
 First, execute it for the setup.
