@@ -168,7 +168,7 @@ const Board = (props: BoardViewProps) => {
         console.log(tx.hash);
 
         await tx.wait(2);
-        let maxMediaId = 0;
+        let maxMediaId = -1;
 
         try {
             // fetch maxMediaId
@@ -178,10 +178,14 @@ const Board = (props: BoardViewProps) => {
             }
         } catch (e) {
             const db = firebase.firestore();
+            const compressCells = JSON.stringify({
+                cells: output.cells,
+                size: output.size,
+            });
             await db.collection('nfts').add({
                 mediaId: maxMediaId.toString(),
                 size: output.size,
-                compressCells: JSON.stringify(output.cells),
+                compressCells,
             });
         }
 
