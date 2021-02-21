@@ -64,18 +64,19 @@ export const Collections: React.FC<CollectionsProps> = ({}) => {
         <div>
             {collections.map((cells, index) => {
                 return (
-                    <Board
-                        key={index}
-                        mode={'viewer'}
-                        intervalTime={500}
-                        cellSize={20}
-                        spawnRate={25}
-                        boardSize={Math.sqrt(cells.length)}
-                        initStatus={cells}
-                        render={(props: BoardViewProps) => (
-                            <BoardView {...props} />
-                        )}
-                    />
+                    <div className="py-4" key={index}>
+                        <Board
+                            mode={'viewer'}
+                            intervalTime={500}
+                            cellSize={20}
+                            spawnRate={25}
+                            boardSize={Math.sqrt(cells.length)}
+                            initStatus={cells}
+                            render={(props: BoardViewProps) => (
+                                <BoardView {...props} />
+                            )}
+                        />
+                    </div>
                 );
             })}
         </div>
