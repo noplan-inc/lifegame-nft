@@ -179,9 +179,9 @@ const Board = (props: BoardViewProps) => {
         } catch (e) {
             const db = firebase.firestore();
             await db.collection('nfts').add({
-                mediaId: maxMediaId,
+                mediaId: maxMediaId.toString(),
                 size: output.size,
-                compressCells: output.cells,
+                compressCells: JSON.stringify(output.cells),
             });
         }
 
