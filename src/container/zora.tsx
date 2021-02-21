@@ -119,7 +119,7 @@ export const ListZora: React.FC<{}> = () => {
                 if (!cells) return <p>cloud not load cells</p>;
 
                 return (
-                    <div key={index}>
+                    <div key={index} className="py-8">
                         <Board
                             mode={'viewer'}
                             intervalTime={500}

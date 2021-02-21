@@ -13,6 +13,7 @@ interface BoardViewProps {
     start: () => void;
     stop: () => void;
     setCells: (cells: Cell[]) => void;
+    isPlaying: boolean;
 }
 
 declare module 'react-notifications' {

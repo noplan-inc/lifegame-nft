@@ -4,8 +4,11 @@ import BoardView from '../presentational/boardView';
 
 export const Editor = () => {
     return (
-        <div>
-            <h2>Editor</h2>
+        <div className="py-4">
+            <div className="py-4">
+                <h2 className="font-bold text-3xl">Editor</h2>
+            </div>
+
             <Board
                 mode={'editor'}
                 intervalTime={500}
