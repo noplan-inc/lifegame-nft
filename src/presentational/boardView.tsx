@@ -190,47 +190,6 @@ const Board = (props: BoardViewProps) => {
 
     return (
         <div>
-            {isEditor ? (
-                <div>
-                    <textarea
-                        onChange={(val) => {
-                            const eCells = JSON.parse(
-                                val.currentTarget.value
-                            ) as ContentData;
-
-                            const cells = restoreCellsFromIpfs(eCells);
-                            setCells(cells);
-                        }}
-                    />
-                    <input
-                        placeholder={'0 < boardSize < 100'}
-                        onChange={(val) => {
-                            const boardSize = parseInt(val.currentTarget.value);
-
-                            if (boardSize > 100 || isNaN(boardSize)) {
-                                alert(
-                                    `boardSize is max(60). ${boardSize} is invalid.`
-                                );
-                                return;
-                            }
-
-                            const newStatus: Cell[] = createBoardStatus(
-                                boardSize
-                            ).map((cell: Cell, index: number) => ({
-                                ...cell,
-                                ...setInitCellId(index),
-                                ...setInitCellLive(50),
-                                ...setInitCellNeighbours(boardSize, index),
-                            }));
-                            setBoardSize(boardSize);
-                            setCells(newStatus);
-                        }}
-                    />
-                </div>
-            ) : (
-                <></>
-            )}
-
             <div style={{ fontSize: 0 }}>
                 {boardStatus.map(
                     (cell: Cell, index: number): React.ReactNode => (
@@ -271,6 +230,61 @@ const Board = (props: BoardViewProps) => {
                     <></>
                 )}
             </div>
+
+            {isEditor ? (
+                <div className="grid grid-rows-2 mx-80 gap-4">
+                    <label className="grid">
+                        <span className="text-2xl row-span-1 my-4">
+                            JSON input
+                        </span>
+                        <textarea
+                            onChange={(val) => {
+                                const eCells = JSON.parse(
+                                    val.currentTarget.value
+                                ) as ContentData;
+
+                                const cells = restoreCellsFromIpfs(eCells);
+                                setCells(cells);
+                            }}
+                        />
+                    </label>
+
+                    <label className="grid">
+                        <span className="text-2xl row-span-1 my-4">
+                            boardSize
+                        </span>
+                        <input
+                            className="col-span-1 mx-"
+                            placeholder={'0 < boardSize < 100'}
+                            onChange={(val) => {
+                                const boardSize = parseInt(
+                                    val.currentTarget.value
+                                );
+
+                                if (boardSize > 100 || isNaN(boardSize)) {
+                                    alert(
+                                        `boardSize is max(100). ${boardSize} is invalid.`
+                                    );
+                                    return;
+                                }
+
+                                const newStatus: Cell[] = createBoardStatus(
+                                    boardSize
+                                ).map((cell: Cell, index: number) => ({
+                                    ...cell,
+                                    ...setInitCellId(index),
+                                    ...setInitCellLive(50),
+                                    ...setInitCellNeighbours(boardSize, index),
+                                }));
+                                setBoardSize(boardSize);
+                                setCells(newStatus);
+                            }}
+                        />
+                    </label>
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 };
