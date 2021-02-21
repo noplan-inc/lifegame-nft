@@ -1,10 +1,22 @@
-# Getting Started with Create React App
+# NFT Auction Market for Game of Life 
+This project NFT Auction Market with [Zora Media Protocol](https://github.com/ourzora/core).
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The Game of Life is
+>`"The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves. It is Turing complete and can simulate a universal constructor or any other Turing machine.`” -wikipedia
+
+## getting started
+- access [testnet](https://lifegame-nft.web.app/)
+- connect wallet
+- You can bid any nfts on market.
+- If owner accept bid or set ask, You can get it. 
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+## How to develop
+### `yarn`
+First, execute it for the setup.
 
 ### `yarn start`
 
@@ -13,11 +25,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `yarn build`
 
@@ -29,18 +36,20 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
+### `yarn deploy:firebase:hosting`
+If you logged in the firebase, you can deploy it.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### how to deploy contract
+```bash
+cd core
+yarn
+vi .env.bsc # write this.
+# RPC_ENDPOINT=https://data-seed-prebsc-2-s1.binance.org:8545
+# PRIVATE_KEY=<TYPE SECRET KEY HERE>
+yarn build
+yarn deploy:bsc-testnet
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## introduction video
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+[comment]: <> (TODO youtube link)
